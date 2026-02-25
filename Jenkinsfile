@@ -5,7 +5,7 @@ pipeline {
         stage('GIT') {
             steps {
                 // Récupération du code depuis Git
-                git 'https://github.com/ton-repo/ton-projet.git'
+                git 'https://github.com/Laouini-islem/devops'
             }
         }
         
