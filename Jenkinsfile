@@ -1,14 +1,32 @@
 pipeline {
     agent any
- 
-    tools {
-        maven 'M2_HOME'
-    }
- 
+    
     stages {
-        stage('Compile & Test') {
+        stage('GIT') {
             steps {
-                sh 'mvn clean install -DskipTests'
+                // Récupération du code depuis Git
+                git 'https://github.com/ton-repo/ton-projet.git'
+            }
+        }
+        
+        stage('MAVEN Build') {
+            steps {
+                sh 'mvn clean compile'
+            }
+        }
+        
+        stage('SONARQUBE') {
+            environment {
+                SONAR_HOST_URL = 'http://192.168.33.10:9000/'
+                SONAR_AUTH_TOKEN = credentials('sonarqube')  // ID du credential créé
+            }
+            steps {
+                sh '''
+                    mvn sonar:sonar \
+                    -Dsonar.projectKey=devops_git \
+                    -Dsonar.host.url=${SONAR_HOST_URL} \
+                    -Dsonar.token=${SONAR_AUTH_TOKEN}
+                '''
             }
         }
     }
